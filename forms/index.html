@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="Registro para clases gratuitas de Refugio Serenia.">
+<title>Clases gratuitas · Refugio Serenia</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500;1,600&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600;9..40,700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/css/styles.css">
+</head>
+<body>
+<main class="page">
+  <div class="wrap">
+    <section aria-labelledby="pageTitle">
+      <div class="brand">
+        Refugio<span class="dot"></span><span class="italic">Serenia</span>
+      </div>
+
+      <p class="overline">Clases gratuitas</p>
+      <h1 id="pageTitle">Reserva tu cupo para practicar con nosotras.</h1>
+      <p class="lede" id="pageCopy">
+        Elige una clase disponible, deja tus datos y guardaremos tu cupo. Cada clase tiene cupos limitados para cuidar la experiencia.
+      </p>
+
+      <div class="details" aria-label="Como funciona">
+        <div class="detail">
+          <span class="detail-num">I</span>
+          <p id="detailOne">Mostramos solo las clases que todavia tienen cupo disponible.</p>
+        </div>
+        <div class="detail">
+          <span class="detail-num">II</span>
+          <p id="detailTwo">Tu email o telefono solo puede registrarse una vez en esta invitacion gratuita.</p>
+        </div>
+        <div class="detail">
+          <span class="detail-num">III</span>
+          <p id="detailThree">Despues del registro, nuestro equipo puede contactarte por WhatsApp si necesitamos confirmar algun detalle.</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="form-shell" aria-label="Formulario de registro">
+      <div class="form-head">
+        <p class="overline">Registro</p>
+        <h2 id="formTitle">Elige tu clase</h2>
+        <p id="formIntro">Completa tus datos para reservar uno de los cupos gratuitos disponibles.</p>
+        <div class="availability-note" id="availabilityNote">Cargando clases disponibles.</div>
+      </div>
+
+      <form class="registration-form" id="freeClassForm" novalidate>
+        <div id="formBody">
+          <div class="field-grid">
+            <div class="field">
+              <label for="firstName">Nombre</label>
+              <input id="firstName" name="nombre" type="text" autocomplete="given-name" placeholder="Tu nombre" required>
+            </div>
+            <div class="field">
+              <label for="lastName">Apellido</label>
+              <input id="lastName" name="apellido" type="text" autocomplete="family-name" placeholder="Tu apellido" required>
+            </div>
+            <div class="field">
+              <label for="email">Email</label>
+              <input id="email" name="email" type="email" autocomplete="email" placeholder="tu@email.com" required>
+            </div>
+            <div class="field">
+              <label for="phone">Numero telefonico</label>
+              <input id="phone" name="telefono" type="tel" inputmode="tel" autocomplete="tel" placeholder="+57 300 000 0000" required>
+            </div>
+            <div class="field full" id="classField">
+              <label for="classSelect">Clase a reservar</label>
+              <select id="classSelect" name="class_id" required>
+                <option value="">Cargando clases...</option>
+              </select>
+            </div>
+          </div>
+
+          <label class="check-field" for="consentimiento">
+            <input id="consentimiento" name="consentimiento" type="checkbox" required>
+            <span>Acepto que Refugio Serenia use estos datos para gestionar mi registro y contactarme sobre clases gratuitas.</span>
+          </label>
+
+          <div class="form-actions">
+            <button class="btn" id="submitButton" type="submit">Registrarme</button>
+          </div>
+
+          <p class="privacy-copy" id="privacyCopy">
+            Usaremos estos datos solo para gestionar tu cupo y contactarte sobre esta clase gratuita.
+          </p>
+        </div>
+
+        <div class="empty-state" id="emptyState" hidden>
+          Lamentablemente no tenemos mas cupos para las clases gratuitas de esta semana. Si quieres, dejanos tus datos y enterate primero de otras clases gratuitas en el futuro.
+        </div>
+
+        <div class="form-message" id="formMessage" role="status" aria-live="polite"></div>
+      </form>
+    </section>
+  </div>
+</main>
+
+<script src="assets/js/index.js" defer></script>
+</body>
+</html>
