@@ -10,7 +10,7 @@ const pageTitle = document.getElementById('pageTitle');
 const pageCopy = document.getElementById('pageCopy');
 const formTitle = document.getElementById('formTitle');
 const formIntro = document.getElementById('formIntro');
-const privacyCopy = document.getElementById('privacyCopy');
+const limitNote = document.getElementById('limitNote');
 const detailOne = document.getElementById('detailOne');
 const detailTwo = document.getElementById('detailTwo');
 const detailThree = document.getElementById('detailThree');
@@ -133,9 +133,9 @@ function renderClasses(classes) {
   formIntro.textContent = hasClasses
     ? 'Completa tus datos para reservar uno de los cupos gratuitos disponibles.'
     : 'Dejanos tus datos y te avisaremos antes cuando abramos nuevas clases gratuitas.';
-  privacyCopy.textContent = hasClasses
-    ? 'Usaremos estos datos solo para gestionar tu cupo y contactarte sobre esta clase gratuita.'
-    : 'Usaremos estos datos solo para avisarte sobre futuras clases gratuitas de Refugio Serenia.';
+  limitNote.textContent = hasClasses
+    ? 'Recuerda: solo puedes reservar una clase gratuita por semana.'
+    : 'Si ya nos dejaste tus datos, no necesitas registrarte de nuevo.';
   detailOne.textContent = hasClasses
     ? 'Mostramos solo las clases que todavia tienen cupo disponible.'
     : 'Te escribiremos primero cuando abramos una nueva invitacion gratuita.';

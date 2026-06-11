@@ -50,6 +50,8 @@
 
       <form class="registration-form" id="freeClassForm" novalidate>
         <div id="formBody">
+          <div class="limit-note" id="limitNote">Recuerda: solo puedes reservar una clase gratuita por semana.</div>
+
           <div class="field-grid">
             <div class="field">
               <label for="firstName">Nombre</label>
@@ -77,16 +79,12 @@
 
           <label class="check-field" for="consentimiento">
             <input id="consentimiento" name="consentimiento" type="checkbox" required>
-            <span>Acepto que Refugio Serenia use estos datos para gestionar mi registro y contactarme sobre clases gratuitas.</span>
+            <span>Acepto que Refugio Serenia use estos datos para gestionar mi registro y contactarme sobre clases gratuitas y promociones de Refugio Serenia.</span>
           </label>
 
           <div class="form-actions">
             <button class="btn" id="submitButton" type="submit">Registrarme</button>
           </div>
-
-          <p class="privacy-copy" id="privacyCopy">
-            Usaremos estos datos solo para gestionar tu cupo y contactarte sobre esta clase gratuita.
-          </p>
         </div>
 
         <div class="empty-state" id="emptyState" hidden>

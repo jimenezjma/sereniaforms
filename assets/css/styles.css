@@ -209,6 +209,17 @@ h1 .italic {
   padding: 34px 36px 38px;
 }
 
+.limit-note {
+  margin-bottom: 18px;
+  padding: 12px 14px;
+  border: 1px solid rgba(125, 118, 72, .22);
+  border-radius: var(--r-sm);
+  background: rgba(155, 151, 114, .10);
+  color: var(--tinta-60);
+  font-size: .86rem;
+  line-height: 1.5;
+}
+
 .field-grid {
   display: grid;
   grid-template-columns: 1fr 1fr;
@@ -345,13 +356,6 @@ h1 .italic {
   border-color: rgba(166, 104, 65, .26);
   background: rgba(166, 104, 65, .11);
   color: var(--primary-d);
-}
-
-.privacy-copy {
-  margin-top: 18px;
-  color: var(--tinta-40);
-  font-size: .78rem;
-  line-height: 1.55;
 }
 
 @media (max-width: 920px) {
