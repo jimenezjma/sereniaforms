@@ -18,6 +18,13 @@ const detailThree = document.getElementById('detailThree');
 const API_URL = '/api/clases-gratis';
 let formMode = 'registration';
 
+// Preselección de clase vía URL: ?class_id=<id exacto> o ?clase=<texto del nombre>
+const PRESELECT = (() => {
+  const params = new URLSearchParams(window.location.search);
+  return { id: params.get('class_id'), text: params.get('clase') };
+})();
+let preselectApplied = false;
+
 loadClasses();
 
 form.addEventListener('submit', async (event) => {
@@ -145,6 +152,36 @@ function renderClasses(classes) {
   detailThree.textContent = hasClasses
     ? 'Despues del registro, nuestro equipo puede contactarte por WhatsApp si necesitamos confirmar algun detalle.'
     : 'Podremos contactarte por WhatsApp o email cuando tengamos nuevos cupos.';
+
+  if (hasClasses) applyPreselect();
+}
+
+// Selecciona la clase indicada en la URL (una sola vez, en la primera carga).
+function applyPreselect() {
+  if (preselectApplied) return;
+  const { id, text } = PRESELECT;
+  if (!id && !text) return;
+
+  const options = Array.from(classSelect.options).filter((option) => option.value);
+  let match = null;
+  if (id) match = options.find((option) => option.value === id);
+  if (!match && text) {
+    const needle = normalizeText(text);
+    match = options.find((option) => normalizeText(option.textContent).includes(needle));
+  }
+
+  if (match) {
+    classSelect.value = match.value;
+    preselectApplied = true;
+  }
+}
+
+function normalizeText(value) {
+  return value
+    .toLowerCase()
+    .normalize('NFD')
+    .replace(/[̀-ͯ]/g, '')
+    .trim();
 }
 
 function renderLoadError() {
