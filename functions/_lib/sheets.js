@@ -145,6 +145,12 @@ export async function createFreeClassRegistration(env, payload) {
   return {
     ok: true,
     registration,
+    classItem: {
+      class_id: classItem.class_id,
+      class_name: classItem.class_name,
+      starts_at: classItem.starts_at,
+      teacher: classItem.teacher
+    },
     remaining: Math.max(capacity - taken - 1, 0)
   };
 }

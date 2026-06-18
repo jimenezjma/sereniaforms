@@ -1,4 +1,5 @@
 import { json, methodNotAllowed, optionsResponse } from '../_lib/http.js';
+import { sendRegistrationConfirmationEmail } from '../_lib/email.js';
 import { createFreeClassLead, createFreeClassRegistration, getAvailableFreeClasses, normalizeDigits, normalizeEmail } from '../_lib/sheets.js';
 
 export async function onRequestOptions() {
@@ -59,12 +60,17 @@ export async function onRequestPost({ request, env }) {
       }, { status: result.status || 409 });
     }
 
+    const emailResult = await trySendConfirmationEmail(env, result);
+
     return json({
       ok: true,
       status: 'registered',
       registration_id: result.registration.registration_id,
       remaining: result.remaining,
-      message: 'Tu cupo quedo registrado. Te contactaremos por WhatsApp.'
+      confirmation_email_sent: emailResult.sent,
+      message: emailResult.sent
+        ? 'Tu cupo quedo registrado. Te enviamos la confirmacion a tu correo.'
+        : 'Tu cupo quedo registrado correctamente. Te contactaremos por WhatsApp si necesitamos confirmar algo.'
     });
   } catch (error) {
     return json({
@@ -72,6 +78,21 @@ export async function onRequestPost({ request, env }) {
       message: 'No pudimos guardar tu registro en este momento.',
       detail: error.message
     }, { status: 502 });
+  }
+}
+
+async function trySendConfirmationEmail(env, result) {
+  try {
+    return await sendRegistrationConfirmationEmail(env, {
+      registration: result.registration,
+      classItem: result.classItem
+    });
+  } catch (error) {
+    console.error('Confirmation email failed', {
+      registration_id: result.registration?.registration_id,
+      message: error.message
+    });
+    return { sent: false, error };
   }
 }
 

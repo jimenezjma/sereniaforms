@@ -48,6 +48,18 @@ GOOGLE_PRIVATE_KEY
 GOOGLE_SHEET_ID
 ```
 
+Variables/secretos para correo de confirmacion:
+
+```text
+RESEND_API_KEY
+RESEND_FROM_EMAIL
+PUBLIC_FORM_URL
+```
+
+`RESEND_API_KEY` habilita el envio con Resend. Si no esta configurada, el registro se guarda igual y no se intenta enviar correo.
+`RESEND_FROM_EMAIL` es opcional y por defecto usa `Refugio Serenia <no-reply@refugioserenia.com>`.
+`PUBLIC_FORM_URL` es opcional y por defecto usa `https://form.refugioserenia.com/`.
+
 Dominio sugerido:
 
 ```text
@@ -62,4 +74,5 @@ POST /api/clases-gratis
 ```
 
 La reserva oficial se escribe directamente en `FreeClassRegistrations`.
+Cuando Resend esta configurado, cada reserva exitosa envia un correo de confirmacion con fecha, hora, enlace de Google Calendar, WhatsApp y enlace para reservar otra clase.
 Si todas las clases estan llenas, la pagina cambia a formulario de aviso futuro y guarda los datos en `FreeClassWaitlist`.

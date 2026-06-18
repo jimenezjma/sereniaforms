@@ -13,6 +13,7 @@ El formulario vive fuera del sitio web principal y funciona como un enlace puntu
 - Formulario de registro con nombre, apellido, email, telefono, clase a reservar y consentimiento de uso de datos.
 - Control automatico de cupos por clase.
 - Registro flexible para que una persona pueda reservar clases distintas con los mismos datos, evitando duplicar la misma clase.
+- Correo de confirmacion automatico con fecha, hora, Google Calendar, WhatsApp y enlace para reservar otra clase cuando Resend esta configurado.
 - Mensaje alternativo cuando ya no quedan cupos disponibles.
 - Formulario de interes futuro cuando las clases estan llenas.
 - Integracion directa con Google Sheets para que el equipo pueda operar sin herramientas tecnicas.
@@ -30,6 +31,7 @@ La solucion esta compuesta por:
 - **Cloudflare Pages:** hospeda la pagina publica y las funciones del servidor.
 - **Pages Functions:** valida disponibilidad, cupos y escritura de registros.
 - **Google Sheets API:** permite leer clases y guardar registros automaticamente.
+- **Resend:** envia correos de confirmacion de reserva cuando esta configurado.
 - **Google Service Account:** cuenta tecnica que autoriza al servidor a escribir en el Sheet.
 - **GitHub:** repositorio del proyecto para control de versiones y despliegues.
 
