@@ -68,6 +68,8 @@ export async function onRequestPost({ request, env }) {
       registration_id: result.registration.registration_id,
       remaining: result.remaining,
       confirmation_email_sent: emailResult.sent,
+      confirmation_email_status: emailResult.status || (emailResult.sent ? 'sent' : 'not_sent'),
+      confirmation_email_reason: emailResult.reason || '',
       message: emailResult.sent
         ? 'Tu cupo quedo registrado. Te enviamos la confirmacion a tu correo.'
         : 'Tu cupo quedo registrado correctamente. Te contactaremos por WhatsApp si necesitamos confirmar algo.'
@@ -83,16 +85,28 @@ export async function onRequestPost({ request, env }) {
 
 async function trySendConfirmationEmail(env, result) {
   try {
-    return await sendRegistrationConfirmationEmail(env, {
+    const emailResult = await sendRegistrationConfirmationEmail(env, {
       registration: result.registration,
       classItem: result.classItem
     });
+    if (!emailResult.sent) {
+      console.warn('Confirmation email not sent', {
+        registration_id: result.registration?.registration_id,
+        status: emailResult.status || 'not_sent',
+        reason: emailResult.reason || ''
+      });
+    }
+    return emailResult;
   } catch (error) {
     console.error('Confirmation email failed', {
       registration_id: result.registration?.registration_id,
       message: error.message
     });
-    return { sent: false, error };
+    return {
+      sent: false,
+      status: 'failed',
+      reason: error.message
+    };
   }
 }
 

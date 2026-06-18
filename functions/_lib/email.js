@@ -9,10 +9,21 @@ const DEFAULT_DURATION_MINUTES = 60;
 
 export async function sendRegistrationConfirmationEmail(env, { registration, classItem }) {
   if (!env.RESEND_API_KEY) {
-    return { sent: false, skipped: true, reason: 'missing_resend_api_key' };
+    return {
+      sent: false,
+      skipped: true,
+      status: 'skipped',
+      reason: 'missing_resend_api_key'
+    };
   }
 
   const payload = buildRegistrationConfirmationPayload(env, { registration, classItem });
+  console.log('Sending confirmation email with Resend', {
+    registration_id: registration.registration_id,
+    to: registration.email,
+    from: payload.from
+  });
+
   const response = await fetch(RESEND_EMAILS_URL, {
     method: 'POST',
     headers: {
@@ -28,7 +39,7 @@ export async function sendRegistrationConfirmationEmail(env, { registration, cla
     throw new Error(data.message || `Resend failed for ${registration.email}`);
   }
 
-  return { sent: true, data };
+  return { sent: true, status: 'sent', data };
 }
 
 function buildRegistrationConfirmationPayload(env, { registration, classItem }) {
@@ -83,11 +94,16 @@ function buildRegistrationConfirmationPayload(env, { registration, classItem }) 
 
 function resolveClassDetails({ registration, classItem }) {
   const className = clean(registration.class_name || classItem?.class_name || 'Clase gratuita');
-  const startsAt = parseStartsAt(classItem?.starts_at) || parseStartsAt(registration.starts_at) || parseClassId(registration.class_id)?.startsAt;
+  const classIdDetails = parseClassId(registration.class_id);
+  const startsAt = firstValidStartsAt([
+    parseStartsAt(classItem?.starts_at),
+    parseStartsAt(registration.starts_at),
+    classIdDetails?.startsAt
+  ]);
 
   return {
-    className,
-    startsAt: startsAt || new Date().toISOString()
+    className: className || classIdDetails?.className || 'Clase gratuita',
+    startsAt
   };
 }
 
@@ -95,6 +111,9 @@ function parseStartsAt(value) {
   const raw = clean(value);
   if (!raw) return '';
   if (/^\d{4}-\d{2}-\d{2}$/.test(raw)) return '';
+
+  const serialDate = parseGoogleSheetsSerialDate(raw);
+  if (serialDate) return serialDate;
 
   const isoLike = raw.match(/^(\d{4}-\d{2}-\d{2})[ T](\d{1,2}):(\d{2})(?::(\d{2}))?(?:\.\d{1,3})?(?:Z|[+-]\d{2}:?\d{2})?$/);
   if (isoLike) {
@@ -109,9 +128,48 @@ function parseStartsAt(value) {
     return `${date}T${hour.padStart(2, '0')}:${minute}:${second}-05:00`;
   }
 
+  const spanishTime = raw.match(/^(\d{1,2})\/(\d{1,2})\/(\d{4})[ T](\d{1,2}):(\d{2})(?::(\d{2}))?\s*(a\.?\s*m\.?|p\.?\s*m\.?|am|pm)$/i);
+  if (spanishTime) {
+    const [, day, month, year, rawHour, minute, second = '00', meridiem] = spanishTime;
+    let hour = Number(rawHour);
+    const normalizedMeridiem = meridiem.toLowerCase().replace(/\s/g, '');
+    if (normalizedMeridiem.startsWith('p') && hour < 12) hour += 12;
+    if (normalizedMeridiem.startsWith('a') && hour === 12) hour = 0;
+    const date = `${year}-${month.padStart(2, '0')}-${day.padStart(2, '0')}`;
+    return `${date}T${String(hour).padStart(2, '0')}:${minute}:${second}-05:00`;
+  }
+
   const parsed = new Date(raw);
   if (Number.isNaN(parsed.getTime())) return '';
   return parsed.toISOString();
+}
+
+function firstValidStartsAt(values) {
+  for (const value of values) {
+    if (isValidStartsAt(value)) return value;
+  }
+  throw new Error('No pudimos interpretar la fecha y hora de la clase.');
+}
+
+function isValidStartsAt(value) {
+  return Boolean(value) && !Number.isNaN(new Date(value).getTime());
+}
+
+function parseGoogleSheetsSerialDate(raw) {
+  if (!/^\d+(\.\d+)?$/.test(raw)) return '';
+  const serial = Number(raw);
+  if (!Number.isFinite(serial) || serial < 20000) return '';
+
+  const excelEpoch = Date.UTC(1899, 11, 30);
+  const utcMs = excelEpoch + serial * 24 * 60 * 60 * 1000;
+  const date = new Date(utcMs);
+  const year = date.getUTCFullYear();
+  const month = String(date.getUTCMonth() + 1).padStart(2, '0');
+  const day = String(date.getUTCDate()).padStart(2, '0');
+  const hour = String(date.getUTCHours()).padStart(2, '0');
+  const minute = String(date.getUTCMinutes()).padStart(2, '0');
+  const second = String(date.getUTCSeconds()).padStart(2, '0');
+  return `${year}-${month}-${day}T${hour}:${minute}:${second}-05:00`;
 }
 
 function parseClassId(classId) {
@@ -243,6 +301,9 @@ function buildEmailText({
 
 function buildGoogleCalendarUrl({ className, startsAt, durationMinutes, location, description }) {
   const start = new Date(startsAt);
+  if (Number.isNaN(start.getTime())) {
+    throw new Error(`Invalid class start time: ${startsAt}`);
+  }
   const end = new Date(start.getTime() + durationMinutes * 60 * 1000);
   const dates = `${formatCalendarUtc(start)}/${formatCalendarUtc(end)}`;
   const params = new URLSearchParams({

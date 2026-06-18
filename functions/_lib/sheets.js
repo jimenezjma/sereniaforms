@@ -121,7 +121,7 @@ export async function createFreeClassRegistration(env, payload) {
     };
   }
 
-  const now = new Date().toISOString();
+  const now = nowInBogotaForSheet();
   const registration = {
     registration_id: `FORM1-${Date.now()}-${randomToken(4)}`,
     created_at: now,
@@ -175,7 +175,7 @@ export async function createFreeClassLead(env, payload) {
 
   const lead = {
     contact_id: `LEAD-${Date.now()}-${randomToken(4)}`,
-    created_at: new Date().toISOString(),
+    created_at: nowInBogotaForSheet(),
     status: 'future_interest',
     nombre: clean(payload.nombre),
     apellido: clean(payload.apellido),
@@ -354,6 +354,24 @@ function formatClassLabel(classItem) {
     classItem.teacher ? `con ${classItem.teacher}` : ''
   ].filter(Boolean);
   return parts.join(' · ');
+}
+
+function nowInBogotaForSheet() {
+  const parts = new Intl.DateTimeFormat('en-CA', {
+    timeZone: 'America/Bogota',
+    year: 'numeric',
+    month: '2-digit',
+    day: '2-digit',
+    hour: '2-digit',
+    minute: '2-digit',
+    second: '2-digit',
+    hour12: false
+  }).formatToParts(new Date()).reduce((acc, part) => {
+    acc[part.type] = part.value;
+    return acc;
+  }, {});
+
+  return `${parts.year}-${parts.month}-${parts.day} ${parts.hour}:${parts.minute}:${parts.second}`;
 }
 
 function clean(value) {
