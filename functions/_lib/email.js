@@ -96,10 +96,17 @@ function parseStartsAt(value) {
   if (!raw) return '';
   if (/^\d{4}-\d{2}-\d{2}$/.test(raw)) return '';
 
-  const normalizedLocal = raw.match(/^(\d{4}-\d{2}-\d{2})[ T](\d{2}):(\d{2})(?::(\d{2}))?$/);
-  if (normalizedLocal) {
-    const [, date, hour, minute, second = '00'] = normalizedLocal;
-    return `${date}T${hour}:${minute}:${second}-05:00`;
+  const isoLike = raw.match(/^(\d{4}-\d{2}-\d{2})[ T](\d{1,2}):(\d{2})(?::(\d{2}))?(?:\.\d{1,3})?(?:Z|[+-]\d{2}:?\d{2})?$/);
+  if (isoLike) {
+    const [, date, hour, minute, second = '00'] = isoLike;
+    return `${date}T${hour.padStart(2, '0')}:${minute}:${second}-05:00`;
+  }
+
+  const colombianDateTime = raw.match(/^(\d{1,2})\/(\d{1,2})\/(\d{4})[ T](\d{1,2}):(\d{2})(?::(\d{2}))?$/);
+  if (colombianDateTime) {
+    const [, day, month, year, hour, minute, second = '00'] = colombianDateTime;
+    const date = `${year}-${month.padStart(2, '0')}-${day.padStart(2, '0')}`;
+    return `${date}T${hour.padStart(2, '0')}:${minute}:${second}-05:00`;
   }
 
   const parsed = new Date(raw);

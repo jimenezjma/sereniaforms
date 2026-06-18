@@ -31,6 +31,7 @@ contact_id, created_at, status, nombre, apellido, email, telefono, consentimient
 
 `active` acepta valores como `yes`, `true`, `1`, `si`, `active` o `activo`.
 Si `capacity` esta vacio o no es valido, el sistema usa 6 cupos.
+`starts_at` se interpreta como hora local de Bogota. Formatos recomendados: `2026-06-17 07:15`, `2026-06-17T07:15:00` o `17/06/2026 07:15`.
 
 ## Cloudflare Pages
 
