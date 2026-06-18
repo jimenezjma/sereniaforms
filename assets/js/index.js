@@ -141,13 +141,13 @@ function renderClasses(classes) {
     ? 'Completa tus datos para reservar uno de los cupos gratuitos disponibles.'
     : 'Dejanos tus datos y te avisaremos antes cuando abramos nuevas clases gratuitas.';
   limitNote.textContent = hasClasses
-    ? 'Recuerda: solo puedes reservar una clase gratuita por semana.'
+    ? 'Puedes reservar varias clases disponibles. Para cuidar los cupos, cada email o telefono solo puede reservar una vez la misma clase.'
     : 'Si ya nos dejaste tus datos, no necesitas registrarte de nuevo.';
   detailOne.textContent = hasClasses
     ? 'Mostramos solo las clases que todavia tienen cupo disponible.'
     : 'Te escribiremos primero cuando abramos una nueva invitacion gratuita.';
   detailTwo.textContent = hasClasses
-    ? 'Tu email o telefono solo puede registrarse una vez en esta invitacion gratuita.'
+    ? 'Puedes usar el mismo email o telefono para reservar otra clase disponible, pero no repetir la misma clase.'
     : 'Tus datos quedaran en una lista de interes para futuras clases gratuitas.';
   detailThree.textContent = hasClasses
     ? 'Despues del registro, nuestro equipo puede contactarte por WhatsApp si necesitamos confirmar algun detalle.'
@@ -209,16 +209,34 @@ function setSubmitting(isSubmitting) {
 
 function showMessage(type, text) {
   formMessage.className = `form-message ${type} is-visible`;
+  if (type === 'success') {
+    formMessage.innerHTML = `
+      <strong>Registro confirmado</strong>
+      <span>${escapeHtml(text)}</span>
+    `;
+    return;
+  }
+
   formMessage.textContent = text;
 }
 
 function clearMessage() {
   formMessage.className = 'form-message';
-  formMessage.textContent = '';
+  formMessage.innerHTML = '';
 }
 
 function getSuccessFallback() {
   return formMode === 'lead'
     ? 'Listo. Te avisaremos primero cuando abramos nuevas clases gratuitas.'
-    : 'Tu cupo quedo registrado. Te contactaremos por WhatsApp.';
+    : 'Tu cupo quedo registrado correctamente. Te esperamos en Refugio Serenia y podremos contactarte por WhatsApp si necesitamos confirmar algun detalle.';
+}
+
+function escapeHtml(value) {
+  return String(value || '').replace(/[&<>"']/g, (char) => ({
+    '&': '&amp;',
+    '<': '&lt;',
+    '>': '&gt;',
+    '"': '&quot;',
+    "'": '&#039;'
+  }[char]));
 }

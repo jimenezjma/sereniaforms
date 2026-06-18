@@ -12,7 +12,7 @@ El formulario vive fuera del sitio web principal y funciona como un enlace puntu
 - Subdominio de produccion para compartir en campanas.
 - Formulario de registro con nombre, apellido, email, telefono, clase a reservar y consentimiento de uso de datos.
 - Control automatico de cupos por clase.
-- Bloqueo de registros duplicados por email o telefono.
+- Registro flexible para que una persona pueda reservar clases distintas con los mismos datos, evitando duplicar la misma clase.
 - Mensaje alternativo cuando ya no quedan cupos disponibles.
 - Formulario de interes futuro cuando las clases estan llenas.
 - Integracion directa con Google Sheets para que el equipo pueda operar sin herramientas tecnicas.
@@ -28,7 +28,7 @@ Tambien reduce el riesgo operativo de sobrecargar una clase, ya que el sistema s
 La solucion esta compuesta por:
 
 - **Cloudflare Pages:** hospeda la pagina publica y las funciones del servidor.
-- **Pages Functions:** valida disponibilidad, duplicados y escritura de registros.
+- **Pages Functions:** valida disponibilidad, cupos y escritura de registros.
 - **Google Sheets API:** permite leer clases y guardar registros automaticamente.
 - **Google Service Account:** cuenta tecnica que autoriza al servidor a escribir en el Sheet.
 - **GitHub:** repositorio del proyecto para control de versiones y despliegues.
@@ -65,8 +65,7 @@ Guarda personas interesadas cuando ya no quedan cupos disponibles.
 
 - Cada clase tiene un cupo configurable.
 - Por defecto, se trabaja con 6 cupos por clase.
-- Una persona solo puede registrarse una vez por campana.
-- El duplicado se valida por email o telefono.
+- Una persona puede reservar clases distintas con los mismos datos, pero no puede duplicar la misma clase activa.
 - Solo se muestran clases con `active = yes`.
 - Si una clase ya paso, el Sheet puede cambiar `active` automaticamente usando formula.
 - Si todas las clases estan llenas, el formulario cambia a captacion de interes futuro.

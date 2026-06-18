@@ -90,18 +90,20 @@ export async function createFreeClassRegistration(env, payload) {
 
   const email = normalizeEmail(payload.email);
   const telefono = normalizeDigits(payload.telefono);
-  const duplicate = registrations.find((registration) => {
+  const duplicateForClass = registrations.find((registration) => {
+    if (!isCountableRegistration(registration)) return false;
+    const sameClass = registration.class_id === classItem.class_id;
     const sameEmail = email && normalizeEmail(registration.email) === email;
     const samePhone = telefono && normalizeDigits(registration.telefono) === telefono;
-    return sameEmail || samePhone;
+    return sameClass && (sameEmail || samePhone);
   });
 
-  if (duplicate) {
+  if (duplicateForClass) {
     return {
       ok: false,
       status: 409,
-      code: 'duplicate',
-      message: 'Ya tienes un registro activo para estas clases gratuitas.'
+      code: 'duplicate_class',
+      message: 'Ya tienes un registro activo para esta clase. Puedes elegir otra clase disponible.'
     };
   }
 
